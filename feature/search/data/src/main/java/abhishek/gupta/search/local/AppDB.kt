@@ -15,4 +15,6 @@ abstract class AppDB : RoomDatabase() {
                 .fallbackToDestructiveMigration().build()
     }
 
+    abstract fun getDao(): Dao
+
 }

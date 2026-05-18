@@ -4,6 +4,7 @@ import abhishek.gupta.search.data.remote.SearchApiService
 import abhishek.gupta.search.data.repositoryImpl.SearchRepositoryImpl
 import abhishek.gupta.search.domain.repository.SearchRepository
 import abhishek.gupta.search.local.AppDB
+import abhishek.gupta.search.local.Dao
 import android.content.Context
 import dagger.Binds
 import dagger.Module
@@ -52,6 +53,10 @@ object SearchDataModule {
         return AppDB.getInstance(context)
     }
 
+    @Provides
+    fun providesDao(appDB: AppDB): Dao {
+        return appDB.getDao()
+    }
 
 
 }
