@@ -11,8 +11,8 @@ data class DomainRecipe(
     val strMeal: String,
     val strMealThumb: String,
     val strCategory: String,
-    val strTags: String,
-    val strYoutube: String,
+    val strTags: String?,
+    val strYoutube: String?,
     val strInstructions: String
 )
 

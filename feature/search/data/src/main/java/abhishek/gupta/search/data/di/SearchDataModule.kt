@@ -3,10 +3,11 @@ package abhishek.gupta.search.data.di
 import abhishek.gupta.search.data.remote.SearchApiService
 import abhishek.gupta.search.data.repositoryImpl.SearchRepositoryImpl
 import abhishek.gupta.search.domain.repository.SearchRepository
-import abhishek.gupta.search.local.AppDB
-import abhishek.gupta.search.local.Dao
+import abhishek.gupta.search.data.local.AppDB
+import abhishek.gupta.search.data.local.Dao
+import abhishek.gupta.search.data.repositoryImpl.DBRepositoryImpl
+import abhishek.gupta.search.domain.repository.dbRepository
 import android.content.Context
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +48,7 @@ object SearchDataModule {
 
     }
 
+
     @Provides
     @Singleton
     fun providesAppDB(@ApplicationContext context: Context): AppDB {
@@ -56,6 +58,13 @@ object SearchDataModule {
     @Provides
     fun providesDao(appDB: AppDB): Dao {
         return appDB.getDao()
+    }
+
+    @Provides
+    fun providesDbrepository(dao: Dao): dbRepository {
+        return DBRepositoryImpl(
+            dao = dao
+        )
     }
 
 

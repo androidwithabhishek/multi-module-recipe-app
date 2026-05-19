@@ -1,4 +1,4 @@
-package abhishek.gupta.search.local
+package abhishek.gupta.search.data.local
 
 import abhishek.gupta.search.domain.model.DomainRecipe
 import android.content.Context

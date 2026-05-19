@@ -1,4 +1,4 @@
-package abhishek.gupta.search.local
+package abhishek.gupta.search.data.local
 
 import abhishek.gupta.search.domain.model.DomainRecipe
 import androidx.room.Dao
@@ -13,12 +13,15 @@ import javax.inject.Inject
 interface Dao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecipe(domainRecipe: DomainRecipe)
+    suspend fun insertByDomainRecipe(domainRecipe: DomainRecipe)
 
-    @Delete
-    suspend fun deleteRecipe(domainRecipe: DomainRecipe)
+//    @Delete
+//    suspend fun deleteByRecipe(domainRecipe: DomainRecipe)
+
+    @Query("DELETE FROM recipe WHERE idMeal = :id")
+    suspend fun deleteById(id: String)
 
     @Query("SELECT *FROM recipe")
-    suspend fun getAllSavedRecipes(): Flow<List<DomainRecipe>>
+     fun getAllSavedRecipes(): Flow<List<DomainRecipe>>
 
 }

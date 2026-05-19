@@ -2,13 +2,12 @@ package abhishek.gupta.search.screens.recipe_details
 
 import abhishek.gupta.common.utils.NetworkResult
 import abhishek.gupta.common.utils.UiText
+import abhishek.gupta.search.domain.model.DomainRecipe
 import abhishek.gupta.search.domain.model.DomainRecipeDetails
 import abhishek.gupta.search.domain.use_cases.GetRecipeDetailsUseCase
-import androidx.compose.foundation.layout.FlowRow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,9 +47,32 @@ class RecipeDetailsViewModel @Inject constructor(private val getRecipeDetailsUse
                     _navigation.send(RecipeDetails.Navigation.GoBack)
                 }
             }
+
+            is RecipeDetails.Event.InserFevRedipe -> {
+
+
+            }
+
+            is RecipeDetails.Event.DeleteFevRedipe -> {
+
+            }
+
         }
 
 
+    }
+
+    fun DomainRecipeDetails.toDomainRecipe(): DomainRecipe {
+        return DomainRecipe(
+            idMeal,
+            strArea,
+            strMeal,
+            strMealThumb,
+            strCategory,
+            strTags,
+            strYoutube,
+            strInstructions
+        )
     }
 
     private fun searchRecipeDetails(id: String) {
@@ -108,6 +130,11 @@ object RecipeDetails {
     sealed interface Event {
         data class FetchRecipeDetails(val id: String) : Event
         data object GoBackEvent : Event
+
+        data class InserFevRedipe(val domainRecipe: DomainRecipe) : Event
+
+        data class DeleteFevRedipe(val id: String) : Event
+
 
     }
 
