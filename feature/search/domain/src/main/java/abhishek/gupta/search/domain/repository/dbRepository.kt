@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface dbRepository {
 
     suspend fun insert(domainRecipe: DomainRecipe)
-    suspend fun delete(id: String)
+    suspend fun delete(id: String): Int
 
 
     fun getAllRecipes(): Flow<List<DomainRecipe>>

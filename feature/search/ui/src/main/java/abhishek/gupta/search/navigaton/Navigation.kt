@@ -62,6 +62,14 @@ class SearchFeatureApiImpl : SearchFeatureApi {
                     onNavigationClick = {
                         viewModel.onEvent(RecipeDetails.Event.GoBackEvent)
                     },
+                    onDelete = {
+                        viewModel.onEvent(
+                            RecipeDetails.Event.DeleteFevRecipe(it)
+                        )
+                    },
+                    onLike = { viewModel.onEvent(
+                        RecipeDetails.Event.InsertFevRecipe(it)
+                    )}
                 )
 
             }

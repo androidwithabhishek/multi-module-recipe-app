@@ -12,15 +12,10 @@ import javax.inject.Inject
 class InsertRecipeUseCase @Inject constructor(private val dbRepository: dbRepository) {
 
     operator fun invoke(domainRecipe: DomainRecipe) =
-        flow<Unit> { dbRepository.insert(domainRecipe) }.flowOn(Dispatchers.IO)
+        flow<Unit> {
+            dbRepository.insert(domainRecipe)
+            emit(Unit)
+        }.flowOn(Dispatchers.IO)
 
-
-    operator fun invoke(id: String) = flow<Unit> {
-        dbRepository.delete(id)
-    }.flowOn(Dispatchers.IO)
-
-    operator fun  invoke() = flow<Unit>{
-        dbRepository.getAllRecipes()
-    }
 
 }

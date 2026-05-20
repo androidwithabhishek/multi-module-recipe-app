@@ -1,7 +1,9 @@
 package abhishek.gupta.search.screens.recipe_details
 
 import abhishek.gupta.common.utils.UiText
+import abhishek.gupta.search.domain.model.DomainRecipeDetails
 import android.text.Layout
+import android.widget.Toast
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -81,6 +83,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
 import coil.compose.AsyncImage
@@ -94,10 +97,12 @@ import java.time.format.TextStyle
 fun RecipeDetailScreen(
     recipeDetailsViewModel: RecipeDetailsViewModel,
     navHostController: NavHostController,
-    onNavigationClick :()->Unit,
+    onNavigationClick: () -> Unit,
+    onDelete: (id: String) -> Unit,
+    onLike: (domainRecipeDetail: DomainRecipeDetails) -> Unit,
 
 
-) {
+    ) {
 
     val uiState by recipeDetailsViewModel.uiStateForDetails.collectAsState()
 
@@ -110,20 +115,36 @@ fun RecipeDetailScreen(
 
     LaunchedEffect(key1 = recipeDetailsViewModel.navigation) {
 
-        recipeDetailsViewModel.navigation.flowWithLifecycle(lifecycleOwner.lifecycle).collectLatest { navigation ->
+        recipeDetailsViewModel.navigation.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collectLatest { navigation ->
 
-                 when(navigation) {
-                     RecipeDetails.Navigation.GoBack -> {
-                         navHostController.popBackStack()
-                     }
-                 }
+                when (navigation) {
+                    RecipeDetails.Navigation.GoBack -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
+
+
+    }
+
+//    Tost
+    LaunchedEffect(Unit) {
+
+        recipeDetailsViewModel.uiEvent.collect { uiEvent ->
+
+            when(uiEvent ) {
+
+                is RecipeDetails.UiEvent.ShowToast -> {
+
+                    Toast.makeText(
+                        context,
+                        uiEvent .message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
-
-
-
-
-
-
     }
 
 //    val systemUiController = rememberSystemUiController()
@@ -240,7 +261,7 @@ fun RecipeDetailScreen(
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
-                   TopAppBar(
+                    TopAppBar(
                         title = {
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
@@ -255,7 +276,8 @@ fun RecipeDetailScreen(
                             )
                         }, navigationIcon = {
                             IconButton(
-                                onClick = { onNavigationClick.invoke() }, modifier = Modifier.padding(start = 12.dp)
+                                onClick = { onNavigationClick.invoke() },
+                                modifier = Modifier.padding(start = 12.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
@@ -265,28 +287,28 @@ fun RecipeDetailScreen(
                             }
                         }, actions = {
 
-                           Row(
-                               modifier = Modifier.padding(end = 20.dp),
-                               verticalAlignment = Alignment.CenterVertically
-                           ) {
+                            Row(
+                                modifier = Modifier.padding(end = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
-                               IconButton(onClick = {}) {
-                                   Icon(
-                                       imageVector = Icons.Default.Star,
-                                       contentDescription = null,
-                                       tint = Color.White
-                                   )
-                               }
+                                IconButton(onClick = { onLike.invoke(it) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+                                }
 
-                               IconButton(onClick = {}) {
-                                   Icon(
-                                       modifier = Modifier.padding(start = 16.dp),
-                                       imageVector = Icons.Default.Delete,
-                                       contentDescription = null,
-                                       tint = Color.White
-                                   )
-                               }
-                           }
+                                IconButton(onClick = { onDelete.invoke(it.idMeal) }) {
+                                    Icon(
+                                        modifier = Modifier.padding(start = 16.dp),
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+                                }
+                            }
 
                         }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                             containerColor = Color(0xFF605F5F),

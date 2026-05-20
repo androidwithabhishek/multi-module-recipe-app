@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class DBRepositoryImpl(private val dao: Dao) : dbRepository {
+
     override suspend fun insert(domainRecipe: DomainRecipe) {
         dao.insertByDomainRecipe(domainRecipe)
     }
 
-    override suspend fun delete(id: String) {
-        dao.deleteById(id)
+    override suspend fun delete(id: String): Int {
+      return  dao.deleteById(id)
     }
 
     override  fun getAllRecipes(): Flow<List<DomainRecipe>> {

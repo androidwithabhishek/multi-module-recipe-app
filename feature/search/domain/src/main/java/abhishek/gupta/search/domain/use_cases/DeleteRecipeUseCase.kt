@@ -1,0 +1,17 @@
+package abhishek.gupta.search.domain.use_cases
+
+import abhishek.gupta.search.domain.repository.dbRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
+
+class DeleteRecipeUseCase @Inject constructor(private val dbRepository: dbRepository) {
+
+    operator fun invoke(id: String) = flow<Int> {
+        val deletedRows = dbRepository.delete(id = id)
+        emit(deletedRows)
+    }.flowOn(Dispatchers.IO)
+
+
+}

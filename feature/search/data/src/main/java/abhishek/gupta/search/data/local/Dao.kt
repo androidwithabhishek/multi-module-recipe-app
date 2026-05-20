@@ -19,7 +19,7 @@ interface Dao {
 //    suspend fun deleteByRecipe(domainRecipe: DomainRecipe)
 
     @Query("DELETE FROM recipe WHERE idMeal = :id")
-    suspend fun deleteById(id: String)
+    suspend fun deleteById(id: String): Int
 
     @Query("SELECT *FROM recipe")
      fun getAllSavedRecipes(): Flow<List<DomainRecipe>>
