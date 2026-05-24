@@ -8,6 +8,7 @@ import abhishek.gupta.search.domain.use_cases.DeleteRecipeUseCase
 import abhishek.gupta.search.domain.use_cases.GetAllRecipeFormDb
 import abhishek.gupta.search.domain.use_cases.GetRecipeDetailsUseCase
 import abhishek.gupta.search.domain.use_cases.InsertRecipeUseCase
+import abhishek.gupta.search.screens.recipe_list.RecipeList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +31,6 @@ class RecipeDetailsViewModel @Inject constructor(
     private val getRecipeDetailsUseCase: GetRecipeDetailsUseCase,
     private val insertRecipeUseCase: InsertRecipeUseCase,
     private val deleteRecipeUseCase: DeleteRecipeUseCase,
-    private val getAllRecipeFormDb: GetAllRecipeFormDb,
 ) :
     ViewModel() {
 
@@ -102,6 +102,11 @@ class RecipeDetailsViewModel @Inject constructor(
                 }.launchIn(viewModelScope)
             }
 
+           is RecipeDetails.Event.GoToFav -> {
+               viewModelScope.launch {
+                   _navigation.send(RecipeDetails.Navigation.GoFav)
+               }
+           }
         }
 
 
@@ -116,7 +121,7 @@ class RecipeDetailsViewModel @Inject constructor(
             strCategory = strCategory,
             strTags = "",
             strYoutube = "",
-            strInstructions = ""
+            strInstructions = strInstructions
         )
     }
 
@@ -170,15 +175,18 @@ object RecipeDetails {
 
     sealed interface Navigation {
         data object GoBack : Navigation
+        data object GoFav: Navigation
     }
 
     sealed interface Event {
         data class FetchRecipeDetails(val id: String) : Event
         data object GoBackEvent : Event
-
+        data object GoToFav: Event
         data class InsertFevRecipe(val domainRecipeDetails: DomainRecipeDetails) : Event
 
         data class DeleteFevRecipe(val id: String) : Event
+
+
 
     }
     sealed interface UiEvent {

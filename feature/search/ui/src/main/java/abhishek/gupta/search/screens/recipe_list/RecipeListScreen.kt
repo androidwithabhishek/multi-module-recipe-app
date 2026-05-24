@@ -76,6 +76,7 @@ fun RecipeListScreen(
         recipeListViewModel.navigation.flowWithLifecycle(lifecycleOwner.lifecycle).collectLatest {
             when (it) {
                 is RecipeList.Navigation.GoToRecipeDetails -> {
+
                     navHostController.navigate(
                         NavigationRoutes.RecipeDetails.sendId(
                             id = it.id
@@ -92,8 +93,7 @@ fun RecipeListScreen(
     val query = rememberSaveable { mutableStateOf("") }
 
     Scaffold(
-        containerColor = Color.White,
-        topBar = {
+        containerColor = Color.White, topBar = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,8 +101,7 @@ fun RecipeListScreen(
                     .statusBarsPadding()
             ) {
                 TextField(
-                    value = query.value,
-                    onValueChange = {
+                    value = query.value, onValueChange = {
                         query.value = it
                         recipeListViewModel.onSearchQueryChanged(
                             query = query.value
@@ -114,8 +113,7 @@ fun RecipeListScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                         .shadow(
-                            elevation = 10.dp,
-                            shape = RoundedCornerShape(30.dp)
+                            elevation = 10.dp, shape = RoundedCornerShape(30.dp)
                         ),
 
                     placeholder = {
@@ -127,15 +125,12 @@ fun RecipeListScreen(
                     },
 
                     textStyle = androidx.compose.ui.text.TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Black
+                        fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.Black
                     ),
 
                     singleLine = true,
 
-                    shape = RoundedCornerShape(30.dp),
-                    colors = TextFieldDefaults.colors(
+                    shape = RoundedCornerShape(30.dp), colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedIndicatorColor = Color.Transparent,
@@ -146,8 +141,7 @@ fun RecipeListScreen(
             }
 
 
-        }
-    ) { padding ->
+        }) { padding ->
 
         Box(
             modifier = Modifier
@@ -173,8 +167,7 @@ fun RecipeListScreen(
 
                 uiState.data.isNullOrEmpty() -> {
                     Text(
-                        text = "Search",
-                        modifier = Modifier.align(Alignment.Center)
+                        text = "Search", modifier = Modifier.align(Alignment.Center)
                     )
                 }
 

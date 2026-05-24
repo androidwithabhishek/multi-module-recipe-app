@@ -1,6 +1,7 @@
 package abhishek.gupta.search.screens.recipe_details
 
 import abhishek.gupta.common.utils.UiText
+import abhishek.gupta.common.utils.navigation.NavigationRoutes
 import abhishek.gupta.search.domain.model.DomainRecipeDetails
 import android.text.Layout
 import android.widget.Toast
@@ -122,6 +123,12 @@ fun RecipeDetailScreen(
                     RecipeDetails.Navigation.GoBack -> {
                         navHostController.popBackStack()
                     }
+
+                    is RecipeDetails.Navigation.GoFav -> {
+
+                        navHostController.navigate(NavigationRoutes.FavoriteScreen.routes)
+
+                    }
                 }
             }
 
@@ -133,7 +140,7 @@ fun RecipeDetailScreen(
 
         recipeDetailsViewModel.uiEvent.collect { uiEvent ->
 
-            when(uiEvent ) {
+            when(uiEvent) {
 
                 is RecipeDetails.UiEvent.ShowToast -> {
 

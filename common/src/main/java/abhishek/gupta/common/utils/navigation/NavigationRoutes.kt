@@ -9,6 +9,9 @@ sealed class NavigationRoutes(val routes: String) {
         fun sendId(id: String) = "/recipe_details/${id}"
     }
 
+    data object FavoriteScreen : NavigationRoutes("/favorite_screen")
+
+
 
 
 }

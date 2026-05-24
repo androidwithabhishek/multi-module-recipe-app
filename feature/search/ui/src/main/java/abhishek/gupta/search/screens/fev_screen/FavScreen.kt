@@ -1,32 +1,25 @@
 package abhishek.gupta.search.screens.fev_screen
 
 import abhishek.gupta.common.utils.UiText
-import abhishek.gupta.search.screens.recipe_details.urlMaker
-import android.R.attr.maxLines
+import abhishek.gupta.common.utils.navigation.NavigationRoutes
 import android.R.attr.onClick
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,20 +32,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -62,40 +53,95 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FevScreen(
+fun FavScreen(
     modifier: Modifier = Modifier,
-    fevScreenViewModel: FevScreenViewModel,
+    fevScreenViewModel: FavScreenViewModel,
     onClick: (id: String) -> Unit,
+    navHostController: NavHostController,
+    onNavClick: () -> Unit
 ) {
 
-    var showDropdown by rememberSaveable() {
+    var showDropdown by rememberSaveable {
         mutableStateOf(false)
     }
 
-    var selectedIndex by rememberSaveable() {
-
-        mutableStateOf(-0)
+    var selectedIndex by rememberSaveable {
+        mutableIntStateOf(-1)
     }
 
-    val uiState by fevScreenViewModel.fevUiState.collectAsState()
+    val uiState by fevScreenViewModel.fevUiState.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
+    /*
+     * Navigation Events
+     */
+    LaunchedEffect(Unit) {
 
+        fevScreenViewModel.navigation
+            .flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collectLatest { navigation ->
+
+                when (navigation) {
+
+                    is FevRecipeScreen.Navigation.GoBackToDetailScreen -> {
+
+                        navHostController.navigate(
+                            NavigationRoutes.RecipeDetails.sendId(
+                                id = navigation.id
+                            )
+                        )
+                    }
+
+                    is FevRecipeScreen.Navigation.GoBack -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
+    }
+
+
+    LaunchedEffect(Unit) {
+
+        fevScreenViewModel.uiEvent.collectLatest { event ->
+
+            when (event) {
+
+                is FevRecipeScreen.UiEvent.ShowToast -> {
+
+                    Toast.makeText(
+                        context,
+                        event.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
         topBar = {
+
             TopAppBar(
+
                 title = {
                     Text(
+                        text = "Favorites",
                         modifier = Modifier.padding(start = 8.dp),
-                        text = "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = TextStyle(
@@ -104,121 +150,132 @@ fun FevScreen(
                             letterSpacing = 0.5.sp
                         )
                     )
-                }, navigationIcon = {
+                },
+
+                navigationIcon = {
+
                     IconButton(
-                        onClick = { },
+                        onClick = onNavClick,
                         modifier = Modifier.padding(start = 12.dp)
                     ) {
+
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            modifier = Modifier.padding(end = 20.dp),
                             contentDescription = "Back",
                             tint = Color.White
                         )
                     }
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF605F5F),
-                    titleContentColor = Color.White,
-                    scrolledContainerColor = Color(0xFF605F5F)
-                ), scrollBehavior = scrollBehavior, actions = {
-                    IconButton(onClick = { showDropdown = !showDropdown }) {
+                },
+
+                actions = {
+
+                    IconButton(
+                        onClick = {
+                            showDropdown = !showDropdown
+                        }
+                    ) {
+
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            modifier = Modifier.padding(end = 20.dp),
-                            contentDescription = "MoreVert",
+                            contentDescription = "More Options",
                             tint = Color.White
                         )
                     }
-                    if (showDropdown) {
-                        DropdownMenu(expanded = showDropdown, onDismissRequest = {
-                            showDropdown = !showDropdown
-                        }) {
 
-                            DropdownMenuItem(text = { Text(text = "Alphabetical") }, onClick = {
+                    DropdownMenu(
+                        expanded = showDropdown,
+                        onDismissRequest = {
+                            showDropdown = false
+                        }
+                    ) {
+
+                        DropdownMenuItem(
+                            text = {
+                                Text("Alphabetical")
+                            },
+
+                            onClick = {
+
                                 selectedIndex = 0
-                                showDropdown = !showDropdown
+                                showDropdown = false
+
                                 fevScreenViewModel.onEvent(
                                     FevRecipeScreen.Event.AlphabeticalShort
                                 )
-                            }, leadingIcon = {
+                            },
+
+                            leadingIcon = {
+
                                 RadioButton(
                                     selected = selectedIndex == 0,
-                                    onClick = {
-                                        selectedIndex = 0
-                                        showDropdown = !showDropdown
-                                        fevScreenViewModel.onEvent(
-                                            FevRecipeScreen.Event.AlphabeticalShort
-                                        )
-                                    },
+                                    onClick = null
+                                )
+                            }
+                        )
 
-                                    )
-                            })
+                        DropdownMenuItem(
+                            text = {
+                                Text("Less Ingredients")
+                            },
 
-                            DropdownMenuItem(text = { Text(text = "Less Ingredients") }, onClick = {
+                            onClick = {
+
                                 selectedIndex = 1
-                                showDropdown = !showDropdown
+                                showDropdown = false
+
                                 fevScreenViewModel.onEvent(
                                     FevRecipeScreen.Event.LessIngredientShort
                                 )
-                            }, leadingIcon = {
+                            },
+
+                            leadingIcon = {
+
                                 RadioButton(
                                     selected = selectedIndex == 1,
-                                    onClick = {
-                                        selectedIndex = 1
-                                        showDropdown = !showDropdown
-                                        fevScreenViewModel.onEvent(
-                                            FevRecipeScreen.Event.LessIngredientShort
-                                        )
-                                    },
+                                    onClick = null
+                                )
+                            }
+                        )
 
-                                    )
-                            })
+                        DropdownMenuItem(
+                            text = {
+                                Text("Reset")
+                            },
 
-                            DropdownMenuItem(text = { Text(text = "Reset") }, onClick = {
+                            onClick = {
+
                                 selectedIndex = 2
-                                showDropdown = !showDropdown
+                                showDropdown = false
+
                                 fevScreenViewModel.onEvent(
                                     FevRecipeScreen.Event.ResetShort
                                 )
-                            }, leadingIcon = {
+                            },
+
+                            leadingIcon = {
+
                                 RadioButton(
                                     selected = selectedIndex == 2,
-                                    onClick = {
-                                        selectedIndex = 2
-                                        showDropdown = !showDropdown
-                                        fevScreenViewModel.onEvent(
-                                            FevRecipeScreen.Event.ResetShort
-                                        )
-                                    },
-
-                                    )
-                            })
-
-                            DropdownMenuItem(text = { Text(text = "Alphabetical") }, onClick = {
-                                selectedIndex = 0
-                                showDropdown = !showDropdown
-                                fevScreenViewModel.onEvent(
-                                    FevRecipeScreen.Event.AlphabeticalShort
+                                    onClick = null
                                 )
-                            }, leadingIcon = {
-                                RadioButton(
-                                    selected = selectedIndex == 0,
-                                    onClick = {
-                                        selectedIndex = 0
-                                        showDropdown = !showDropdown
-                                        fevScreenViewModel.onEvent(
-                                            FevRecipeScreen.Event.AlphabeticalShort
-                                        )
-                                    },
-
-                                    )
-                            })
-                        }
+                            }
+                        )
                     }
+                },
 
-                }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF605F5F),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White,
+                    scrolledContainerColor = Color(0xFF605F5F)
+                ),
+
+                scrollBehavior = scrollBehavior
             )
-        }) { paddingValues ->
+        }
+
+    ) { paddingValues ->
 
         Box(
             modifier = Modifier
@@ -229,12 +286,14 @@ fun FevScreen(
             when {
 
                 uiState.isLoading -> {
+
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
 
                 uiState.error !is UiText.None -> {
+
                     Text(
                         text = uiState.error.getString(context),
                         color = Color.Red,
@@ -242,29 +301,42 @@ fun FevScreen(
                     )
                 }
 
+                uiState.data.isNullOrEmpty() -> {
+
+                    Text(
+                        text = "Nothing Added Yet",
+                        color = Color.Black,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
                 else -> {
-                    if (uiState?.data?.isEmpty() == true){
-                        Text(
-                            text = "Nothing Added Yet",
-                            color = Color.Black,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
 
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
 
-                        items(uiState.data!!) { item ->
+                        items(
+                            items = uiState.data.orEmpty(),
+                            key = { it.idMeal }
+                        ) { item ->
+
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onClick.invoke(item.idMeal) },
+                                    .clickable {
+                                        onClick(item.idMeal)
+                                    },
+
                                 shape = RoundedCornerShape(24.dp),
-                                elevation = CardDefaults.cardElevation(8.dp),
+
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dp
+                                ),
+
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color(0xFFE0DFDF) // light orange
+                                    containerColor = Color(0xFFE0DFDF)
                                 )
                             ) {
 
@@ -272,10 +344,12 @@ fun FevScreen(
 
                                     AsyncImage(
                                         model = item.strMealThumb,
-                                        contentDescription = null,
+                                        contentDescription = item.strMeal,
+
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(220.dp),
+
                                         contentScale = ContentScale.Crop
                                     )
 
@@ -289,7 +363,10 @@ fun FevScreen(
                                             color = Color.Black
                                         )
 
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(
+                                            modifier = Modifier.height(10.dp)
+                                        )
+
                                         Text(
                                             text = item.strInstructions,
                                             style = MaterialTheme.typography.bodyMedium,
@@ -297,7 +374,6 @@ fun FevScreen(
                                             overflow = TextOverflow.Ellipsis,
                                             maxLines = 4
                                         )
-
                                     }
                                 }
                             }

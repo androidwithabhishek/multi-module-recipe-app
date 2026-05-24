@@ -82,6 +82,7 @@ class RecipeListViewModel @Inject constructor(private val getAllRecipeUseCase: G
                 }
 
             }
+
         }
     }
 
@@ -143,6 +144,8 @@ object RecipeList {
         data class FetchRecipeList(val name: String) : Event
 
         data class GoToRecipeDetails(val id: String) : Event
+
+
     }
 
 
