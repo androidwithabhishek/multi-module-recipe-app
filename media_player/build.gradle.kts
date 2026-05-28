@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -38,4 +41,19 @@ kotlin {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+
+    implementation(project(":common"))
+
+
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.compose.navigation)
+//    coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
+
+
 }

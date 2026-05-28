@@ -26,6 +26,7 @@ sspAndroid = "1.1.1"
 swiperefreshlayout = "1.2.0-rc01"
 timber = "5.0.1"
 navigationCompose = "2.9.8"
+ui = "1.11.2"
 
 
 
@@ -84,6 +85,7 @@ coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 [plugins]

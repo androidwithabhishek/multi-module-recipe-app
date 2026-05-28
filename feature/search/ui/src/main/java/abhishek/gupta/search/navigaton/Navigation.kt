@@ -6,7 +6,7 @@ import abhishek.gupta.common.utils.navigation.NavigationRoutes
 import abhishek.gupta.common.utils.navigation.NavigationSubGraphRoutes
 import abhishek.gupta.search.screens.fev_screen.FavScreen
 import abhishek.gupta.search.screens.fev_screen.FavScreenViewModel
-import abhishek.gupta.search.screens.fev_screen.FevRecipeScreen
+import abhishek.gupta.search.screens.fev_screen.FavRecipeScreen
 import abhishek.gupta.search.screens.recipe_details.RecipeDetailScreen
 import abhishek.gupta.search.screens.recipe_details.RecipeDetails
 import abhishek.gupta.search.screens.recipe_details.RecipeDetailsViewModel
@@ -21,7 +21,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import hilt_aggregated_deps._abhishek_gupta_search_di_UiModule
 
 
 interface SearchFeatureApi : FeatureApi {
@@ -52,6 +51,9 @@ class SearchFeatureApiImpl : SearchFeatureApi {
 
                     },
                     navHostController = navHostController,
+                    onLike = {
+                        viewModel.onEvent(RecipeList.Event.GoToFav)
+                    }
                 )
 
             }
@@ -73,16 +75,16 @@ class SearchFeatureApiImpl : SearchFeatureApi {
                         viewModel.onEvent(RecipeDetails.Event.GoBackEvent)
                     },
                     onDelete = {
-                        viewModel.onEvent(
-                            RecipeDetails.Event.DeleteFevRecipe(it)
-                        )
+//                        viewModel.onEvent(
+//                            RecipeDetails.Event.DeleteFevRecipe(it)
+//                        )
                     },
                     onLike = {
 
                         viewModel.onEvent(
                             RecipeDetails.Event.InsertFevRecipe(it)
                         )
-                        viewModel.onEvent(RecipeDetails.Event.GoToFav)
+//                        viewModel.onEvent(RecipeDetails.Event.GoToFav)
                     }
                 )
 
@@ -96,7 +98,7 @@ class SearchFeatureApiImpl : SearchFeatureApi {
                     modifier = Modifier,
                     fevScreenViewModel = favoriteViewmodel,
                     onClick = {
-                        favoriteViewmodel.onEvent(FevRecipeScreen.Event.GoToDetailScreen(id = it))
+                        favoriteViewmodel.onEvent(FavRecipeScreen.Event.GoToDetailScreen(id = it))
 //                        id?.let {
 //                            viewModel.onEvent(
 //                                RecipeDetails.Event.FetchRecipeDetails(id = it)
@@ -106,8 +108,13 @@ class SearchFeatureApiImpl : SearchFeatureApi {
                     },
                     navHostController = navHostController,
                     onNavClick = {
-                        favoriteViewmodel.onEvent(FevRecipeScreen.Event.GoBack)
+                        favoriteViewmodel.onEvent(FavRecipeScreen.Event.GoBack)
 
+                    },
+                    onDelete = {
+                        favoriteViewmodel.onEvent(
+                            FavRecipeScreen.Event.Delete(id = it)
+                        )
                     }
                 )
 

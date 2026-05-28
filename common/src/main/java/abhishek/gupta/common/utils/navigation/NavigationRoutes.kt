@@ -11,6 +11,10 @@ sealed class NavigationRoutes(val routes: String) {
 
     data object FavoriteScreen : NavigationRoutes("/favorite_screen")
 
+    data object MediaPlayerScreen: NavigationRoutes("/media_player_screen{/video_url}"){
+        fun sendUrl(video_url: String) : String = "/media_player_screen/$video_url"
+    }
+
 
 
 
@@ -19,6 +23,7 @@ sealed class NavigationRoutes(val routes: String) {
 sealed class NavigationSubGraphRoutes(val routes: String){
 
     data object Search : NavigationSubGraphRoutes(routes ="/search" )
+    data object MediaPlayer : NavigationSubGraphRoutes(routes ="/media_player" )
 
 
 }

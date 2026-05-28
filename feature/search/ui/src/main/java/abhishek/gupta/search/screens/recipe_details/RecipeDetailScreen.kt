@@ -307,14 +307,14 @@ fun RecipeDetailScreen(
                                     )
                                 }
 
-                                IconButton(onClick = { onDelete.invoke(it.idMeal) }) {
-                                    Icon(
-                                        modifier = Modifier.padding(start = 16.dp),
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = null,
-                                        tint = Color.White
-                                    )
-                                }
+//                                IconButton(onClick = { onDelete.invoke(it.idMeal)  }) {
+//                                    Icon(
+//                                        modifier = Modifier.padding(start = 16.dp),
+//                                        imageVector = Icons.Default.Delete,
+//                                        contentDescription = null,
+//                                        tint = Color.White
+//                                    )
+//                                }
                             }
 
                         }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

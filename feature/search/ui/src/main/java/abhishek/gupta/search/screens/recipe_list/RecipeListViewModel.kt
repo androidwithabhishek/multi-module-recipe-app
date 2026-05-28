@@ -4,7 +4,9 @@ import abhishek.gupta.common.utils.NetworkResult
 import abhishek.gupta.common.utils.UiText
 import abhishek.gupta.search.domain.model.DomainRecipe
 import abhishek.gupta.search.domain.use_cases.GetAllRecipeUseCase
+import abhishek.gupta.search.screens.recipe_details.RecipeDetails
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -34,6 +36,8 @@ class RecipeListViewModel @Inject constructor(private val getAllRecipeUseCase: G
 
     private val _navigation = Channel<RecipeList.Navigation>()
     val navigation: Flow<RecipeList.Navigation> = _navigation.receiveAsFlow()
+
+
 
 
     init {
@@ -82,7 +86,13 @@ class RecipeListViewModel @Inject constructor(private val getAllRecipeUseCase: G
                 }
 
             }
-
+            is RecipeList.Event.GoToFav ->
+            {
+                viewModelScope.launch {
+                    _navigation.send(RecipeList.Navigation.GoFav
+                    )
+                }
+            }
         }
     }
 
@@ -138,12 +148,16 @@ object RecipeList {
 
     sealed interface Navigation {
         data class GoToRecipeDetails(val id: String) : Navigation
+        data object GoFav: Navigation
     }
 
     sealed interface Event {
         data class FetchRecipeList(val name: String) : Event
 
         data class GoToRecipeDetails(val id: String) : Event
+
+        data object GoToFav: Event
+
 
 
     }

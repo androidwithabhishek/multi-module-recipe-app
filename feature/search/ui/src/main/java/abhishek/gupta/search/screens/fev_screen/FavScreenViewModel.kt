@@ -4,7 +4,6 @@ import abhishek.gupta.common.utils.UiText
 import abhishek.gupta.search.domain.model.DomainRecipe
 import abhishek.gupta.search.domain.use_cases.DeleteRecipeUseCase
 import abhishek.gupta.search.domain.use_cases.GetAllRecipeFormDb
-import abhishek.gupta.search.screens.recipe_list.RecipeList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,17 +30,17 @@ class FavScreenViewModel @Inject constructor (
 
     private var _originalList = mutableListOf<DomainRecipe>()
     val originalList = _originalList
-    private val _fevUiState = MutableStateFlow(FevRecipeScreen.UiState())
-    val fevUiState: StateFlow<FevRecipeScreen.UiState> = _fevUiState.asStateFlow()
+    private val _fevUiState = MutableStateFlow(FavRecipeScreen.UiState())
+    val fevUiState: StateFlow<FavRecipeScreen.UiState> = _fevUiState.asStateFlow()
 
-    private val _navigation = Channel<FevRecipeScreen.Navigation>()
+    private val _navigation = Channel<FavRecipeScreen.Navigation>()
 
 
-    val navigation: Flow<FevRecipeScreen.Navigation> = _navigation.receiveAsFlow()
+    val navigation: Flow<FavRecipeScreen.Navigation> = _navigation.receiveAsFlow()
 
 
     private val _uiEvent =
-        MutableSharedFlow<FevRecipeScreen.UiEvent>()
+        MutableSharedFlow<FavRecipeScreen.UiEvent>()
 
     val uiEvent = _uiEvent.asSharedFlow()
 
@@ -50,37 +49,37 @@ class FavScreenViewModel @Inject constructor (
     }
 
 
-    fun onEvent(event: FevRecipeScreen.Event) {
+    fun onEvent(event: FavRecipeScreen.Event) {
         when (event) {
-            FevRecipeScreen.Event.AlphabeticalShort -> {
+            FavRecipeScreen.Event.AlphabeticalShort -> {
                 _fevUiState.update {
-                    FevRecipeScreen.UiState(data = _originalList.sortedBy {
+                    FavRecipeScreen.UiState(data = _originalList.sortedBy {
                         it.strMeal
                     })
                 }
             }
 
-            FevRecipeScreen.Event.LessIngredientShort -> {
+            FavRecipeScreen.Event.LessIngredientShort -> {
                 _fevUiState.update {
-                    FevRecipeScreen.UiState(data = _originalList.sortedBy {
+                    FavRecipeScreen.UiState(data = _originalList.sortedBy {
                         it.strMeal.length
                     })
                 }
             }
 
-            FevRecipeScreen.Event.ResetShort -> {
+            FavRecipeScreen.Event.ResetShort -> {
                 _fevUiState.update {
-                    FevRecipeScreen.UiState(data = _originalList)
+                    FavRecipeScreen.UiState(data = _originalList)
                 }
             }
-            is FevRecipeScreen.Event.Delete -> {
+            is FavRecipeScreen.Event.Delete -> {
                 deleteRecipeUseCase.invoke(event.id).onEach { deletedRows ->
 
 
                     if (deletedRows > 0) {
 
                         _uiEvent.emit(
-                            FevRecipeScreen.UiEvent.ShowToast(
+                            FavRecipeScreen.UiEvent.ShowToast(
                                 "Recipe Deleted"
                             )
                         )
@@ -88,7 +87,7 @@ class FavScreenViewModel @Inject constructor (
                     } else {
 
                         _uiEvent.emit(
-                            FevRecipeScreen.UiEvent.ShowToast(
+                            FavRecipeScreen.UiEvent.ShowToast(
                                 "Recipe Not Found"
                             )
                         )
@@ -97,18 +96,18 @@ class FavScreenViewModel @Inject constructor (
                 }.launchIn(viewModelScope)
             }
 
-            is FevRecipeScreen.Event.GoToDetailScreen -> {
+            is FavRecipeScreen.Event.GoToDetailScreen -> {
 
                 viewModelScope.launch {
-                    _navigation.send(FevRecipeScreen.Navigation.GoBackToDetailScreen(event.id))
+                    _navigation.send(FavRecipeScreen.Navigation.GoBackToDetailScreen(event.id))
                 }
 
             }
 
-            is FevRecipeScreen.Event.GoBack -> {
+            is FavRecipeScreen.Event.GoBack -> {
 
                 viewModelScope.launch {
-                    _navigation.send(FevRecipeScreen.Navigation.GoBack)
+                    _navigation.send(FavRecipeScreen.Navigation.GoBack)
                 }
 
 
@@ -121,7 +120,7 @@ class FavScreenViewModel @Inject constructor (
             getAllRecipeFormDb.invoke().collectLatest { data ->
                 _originalList = data.toMutableList()
                 _fevUiState.update {
-                    FevRecipeScreen.UiState(data = data)
+                    FavRecipeScreen.UiState(data = data)
                 }
             }
         }
@@ -131,7 +130,7 @@ class FavScreenViewModel @Inject constructor (
 }
 
 
-object FevRecipeScreen {
+object FavRecipeScreen {
     data class UiState(
         val isLoading: Boolean = false,
         val error: UiText = UiText.None,

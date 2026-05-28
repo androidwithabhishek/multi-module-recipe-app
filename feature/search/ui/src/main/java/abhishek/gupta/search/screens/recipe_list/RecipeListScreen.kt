@@ -1,5 +1,6 @@
 import abhishek.gupta.common.utils.UiText
 import abhishek.gupta.common.utils.navigation.NavigationRoutes
+import abhishek.gupta.search.domain.model.DomainRecipeDetails
 import abhishek.gupta.search.screens.recipe_list.RecipeList
 import abhishek.gupta.search.screens.recipe_list.RecipeListViewModel
 import androidx.compose.foundation.background
@@ -22,10 +23,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -65,6 +69,7 @@ import java.time.format.TextStyle
 fun RecipeListScreen(
     recipeListViewModel: RecipeListViewModel,
     onClick: (String) -> Unit,
+    onLike: () -> Unit,
     navHostController: NavHostController,
 ) {
 
@@ -83,6 +88,11 @@ fun RecipeListScreen(
                         )
                     )
                 }
+
+              is RecipeList.Navigation.GoFav ->
+              {
+                  navHostController.navigate(NavigationRoutes.FavoriteScreen.routes)
+              }
             }
         }
     }
@@ -141,6 +151,18 @@ fun RecipeListScreen(
             }
 
 
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onLike.invoke()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Add"
+                )
+            }
         }) { padding ->
 
         Box(

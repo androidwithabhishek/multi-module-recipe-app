@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.material3)
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.ui)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose.navigation)
     implementation(libs.coil)
